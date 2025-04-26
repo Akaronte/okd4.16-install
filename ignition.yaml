@@ -1,0 +1,89 @@
+---
+- name: OpenShift Installation and CoreOS ISO Customization
+  hosts: localhost
+  become: true
+  tasks:
+    - name: Remove the install directory if it exists
+      ansible.builtin.file:
+        path: /root/install_dir/
+        state: absent
+
+    - name: Create the install directory
+      ansible.builtin.file:
+        path: /root/install_dir/
+        state: directory
+        mode: '0755'
+
+    - name: Copy the install-config.yaml file to the install directory
+      ansible.builtin.copy:
+        src: okd4.14-install/install-config.yaml
+        dest: /root/install_dir/install-config.yaml
+
+    - name: Run "openshift-install create manifests" command
+      ansible.builtin.command:
+        cmd: openshift-install create manifests --dir=/root/install_dir/
+      args:
+        chdir: /root
+
+    - name: Update mastersSchedulable to false in cluster-scheduler-02-config.yml
+      ansible.builtin.lineinfile:
+        path: /root/install_dir/manifests/cluster-scheduler-02-config.yml
+        regexp: '^mastersSchedulable: true'
+        line: 'mastersSchedulable: False'
+
+    - name: Run "openshift-install create ignition-configs" command
+      ansible.builtin.command:
+        cmd: openshift-install create ignition-configs --dir=/root/install_dir/
+      args:
+        chdir: /root
+
+    - name: Remove bootstrap ISO if it exists
+      ansible.builtin.file:
+        path: /root/bootstrap.iso
+        state: absent
+
+    - name: Remove master ISO if it exists
+      ansible.builtin.file:
+        path: /root/master.iso
+        state: absent
+
+    - name: Remove worker ISO if it exists
+      ansible.builtin.file:
+        path: /root/worker.iso
+        state: absent
+
+    - name: Customize CoreOS ISO for bootstrap
+      ansible.builtin.command:
+        cmd: coreos-installer iso customize --live-karg-append 'rd.udev=1' --live-karg-append 'ignition.platform.id=qemu' --live-karg-append 'fsck.mode=skip' --dest-device /dev/vda --dest-ignition /root/install_dir/bootstrap.ign -o bootstrap.iso fedora-coreos-41.20250331.3.0-live.x86_64.iso
+      args:
+        chdir: /root
+
+    - name: Customize CoreOS ISO for master
+      ansible.builtin.command:
+        cmd: coreos-installer iso customize --live-karg-append 'rd.udev=1' --live-karg-append 'ignition.platform.id=qemu' --live-karg-append 'fsck.mode=skip' --dest-device /dev/vda --dest-ignition /root/install_dir/master.ign -o master.iso fedora-coreos-41.20250331.3.0-live.x86_64.iso
+      args:
+        chdir: /root
+
+    - name: Customize CoreOS ISO for worker
+      ansible.builtin.command:
+        cmd: coreos-installer iso customize --live-karg-append 'rd.udev=1' --live-karg-append 'ignition.platform.id=qemu' --live-karg-append 'fsck.mode=skip' --dest-device /dev/vda --dest-ignition /root/install_dir/worker.ign -o worker.iso fedora-coreos-41.20250331.3.0-live.x86_64.iso
+      args:
+        chdir: /root
+
+    - name: Copy bootstrap ISO to remote server
+      ansible.builtin.command:
+        cmd: scp -o StrictHostKeyChecking=no bootstrap.iso root@192.168.1.5:/var/lib/vz/template/iso/bootstrap.iso
+      args:
+        chdir: /root
+
+    - name: Copy master ISO to remote server
+      ansible.builtin.command:
+        cmd: scp -o StrictHostKeyChecking=no master.iso root@192.168.1.5:/var/lib/vz/template/iso/master.iso
+      args:
+        chdir: /root
+
+    - name: Copy worker ISO to remote server
+      ansible.builtin.command:
+        cmd: scp -o StrictHostKeyChecking=no worker.iso root@192.168.1.5:/var/lib/vz/template/iso/worker.iso
+      args:
+        chdir: /root

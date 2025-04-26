@@ -1,0 +1,49 @@
+---
+- name: Instalar coreos-installer
+  hosts: localhost
+  become: true
+  tasks:
+    - name: Instalar paquetes necesarios
+      apt:
+        name:
+          - curl
+          - gpg
+          - gcc
+          - make
+          - pkg-config
+          - libssl-dev
+          - libzstd-dev
+        state: present
+        update_cache: yes
+
+    - name: Instalar Rust
+      shell: |
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+      args:
+        executable: /bin/bash
+        creates: "{{ ansible_env.HOME }}/.cargo/bin/rustc"
+
+    - name: Cargar entorno de Rust
+      shell: source {{ ansible_env.HOME }}/.cargo/env
+      args:
+        executable: /bin/bash
+
+    - name: Clonar repositorio coreos-installer
+      git:
+        repo: https://github.com/coreos/coreos-installer.git
+        dest: "{{ ansible_env.HOME }}/coreos-installer"
+        update: no
+
+    - name: Compilar coreos-installer
+      shell: |
+        source {{ ansible_env.HOME }}/.cargo/env
+        cargo build --release
+      args:
+        chdir: "{{ ansible_env.HOME }}/coreos-installer"
+        executable: /bin/bash
+
+    - name: Copiar coreos-installer a /usr/local/bin
+      copy:
+        src: "{{ ansible_env.HOME }}/coreos-installer/target/release/coreos-installer"
+        dest: /usr/local/bin/coreos-installer
+        mode: '0755'
