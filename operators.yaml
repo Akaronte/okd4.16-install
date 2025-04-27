@@ -1,0 +1,41 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: community-operators-catalog
+  namespace: openshift-marketplace 
+spec:
+  sourceType: grpc
+  image: registry.redhat.io/redhat/community-operator-index:v4.16
+  displayName: community-operators-catalog
+  publisher: community-operators
+  updateStrategy:
+    registryPoll: 
+      interval: 30m
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: certified-operators-catalog
+  namespace: openshift-marketplace 
+spec:
+  sourceType: grpc
+  image: registry.redhat.io/redhat/certified-operator-index:v4.16
+  displayName: certified-operators-catalog
+  publisher: certified-operators
+  updateStrategy:
+    registryPoll: 
+      interval: 30m
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: redhat-operators-catalog
+  namespace: openshift-marketplace 
+spec:
+  sourceType: grpc
+  image: registry.redhat.io/redhat/redhat-operator-index:v4.16
+  displayName: redhat-operators-catalog
+  publisher: redhat-operators
+  updateStrategy:
+    registryPoll: 
+      interval: 30m
