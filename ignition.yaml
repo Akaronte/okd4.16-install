@@ -16,7 +16,7 @@
 
     - name: Copy the install-config.yaml file to the install directory
       ansible.builtin.copy:
-        src: okd4.14-install/install-config.yaml
+        src: /root/okd4.16-install/install-config.yaml
         dest: /root/install_dir/install-config.yaml
 
     - name: Run "openshift-install create manifests" command
@@ -54,19 +54,19 @@
 
     - name: Customize CoreOS ISO for bootstrap
       ansible.builtin.command:
-        cmd: coreos-installer iso customize --live-karg-append 'rd.udev=1' --live-karg-append 'ignition.platform.id=qemu' --live-karg-append 'fsck.mode=skip' --dest-device /dev/vda --dest-ignition /root/install_dir/bootstrap.ign -o bootstrap.iso fedora-coreos-41.20250331.3.0-live.x86_64.iso
+        cmd: coreos-installer iso customize --live-karg-append 'rd.udev=1' --live-karg-append 'ignition.platform.id=qemu' --live-karg-append 'fsck.mode=skip' --dest-device /dev/vda --dest-ignition /root/install_dir/bootstrap.ign -o bootstrap.iso fedora-coreos-38.20230609.3.0-live.x86_64.iso
       args:
         chdir: /root
 
     - name: Customize CoreOS ISO for master
       ansible.builtin.command:
-        cmd: coreos-installer iso customize --live-karg-append 'rd.udev=1' --live-karg-append 'ignition.platform.id=qemu' --live-karg-append 'fsck.mode=skip' --dest-device /dev/vda --dest-ignition /root/install_dir/master.ign -o master.iso fedora-coreos-41.20250331.3.0-live.x86_64.iso
+        cmd: coreos-installer iso customize --live-karg-append 'rd.udev=1' --live-karg-append 'ignition.platform.id=qemu' --live-karg-append 'fsck.mode=skip' --dest-device /dev/vda --dest-ignition /root/install_dir/master.ign -o master.iso fedora-coreos-38.20230609.3.0-live.x86_64.iso
       args:
         chdir: /root
 
     - name: Customize CoreOS ISO for worker
       ansible.builtin.command:
-        cmd: coreos-installer iso customize --live-karg-append 'rd.udev=1' --live-karg-append 'ignition.platform.id=qemu' --live-karg-append 'fsck.mode=skip' --dest-device /dev/vda --dest-ignition /root/install_dir/worker.ign -o worker.iso fedora-coreos-41.20250331.3.0-live.x86_64.iso
+        cmd: coreos-installer iso customize --live-karg-append 'rd.udev=1' --live-karg-append 'ignition.platform.id=qemu' --live-karg-append 'fsck.mode=skip' --dest-device /dev/vda --dest-ignition /root/install_dir/worker.ign -o worker.iso fedora-coreos-38.20230609.3.0-live.x86_64.iso
       args:
         chdir: /root
 

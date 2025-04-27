@@ -3,9 +3,12 @@ apt install software-properties-common -y
 add-apt-repository --yes --update ppa:ansible/ansible
 apt install ansible -y
 
+
+wget https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/38.20230609.3.0/x86_64/fedora-coreos-38.20230609.3.0-live.x86_64.iso
+
 wget https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/41.20250331.3.0/x86_64/fedora-coreos-41.20250331.3.0-live.x86_64.iso
 
-wge https://github.com/okd-project/okd/releases/download/4.16.0-okd-scos.1/openshift-install-linux-4.16.0-okd-scos.1.tar.gz
+wget https://github.com/okd-project/okd/releases/download/4.16.0-okd-scos.1/openshift-install-linux-4.16.0-okd-scos.1.tar.gz
 
 wget https://github.com/okd-project/okd/releases/download/4.16.0-okd-scos.1/openshift-client-linux-amd64-rhel8-4.16.0-okd-scos.1.tar.gz
 
@@ -26,3 +29,28 @@ git clone https://github.com/coreos/coreos-installer.git
 cd coreos-installer
 cargo build --release
 sudo cp target/release/coreos-installer /usr/local/bin/
+
+
+sudo named-checkconf
+named-checkzone master1.kube2.okd.piensoluegoinstalo.com.zone /var/cache/bind/kube2.okd.piensoluegoinstalo.com.zone
+named-checkzone master1.kube1.okd.piensoluegoinstalo.com.zone /var/cache/bind/kube1.okd.piensoluegoinstalo.com.zone
+
+sudo named-checkzone 200.168.192.IN-ADDR.ARPA /var/cache/bind/200.168.192.IN-ADDR.ARPA.zone
+sudo named-checkzone 100.168.192.IN-ADDR.ARPA /var/cache/bind/100.168.192.IN-ADDR.ARPA.zone
+
+
+named-checkzone master1.kube1.okd.piensoluegoinstalo.com.zone /var/cache/bind/kube1.okd.piensoluegoinstalo.com.zone
+
+
+
+dig @127.0.0.1 bootstrap.kube1.okd.piensoluegoinstalo.com
+
+
+cat install_dir/auth/kubeadmin-password
+
+oc adm policy add-cluster-role-to-user cluster-admin admin
+
+oc get csr -ojson | jq -r '.items[] | select(.status == {} ) | .metadata.name' | xargs oc adm certificate approve
+
+
+

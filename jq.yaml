@@ -1,0 +1,19 @@
+- name: Instalar jq en Linux
+  hosts: localhost
+  become: true
+  tasks:
+    - name: Descargar jq
+      get_url:
+        url: https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
+        dest: /usr/local/bin/jq
+        mode: '0755'
+
+    - name: Verificar la versión de jq
+      command: jq --version
+      register: jq_version
+
+    - name: Mostrar versión de jq
+      debug:
+        msg: "Versión de jq instalada: {{ jq_version.stdout }}"
+        
+#oc get csr -ojson | jq -r '.items[] | select(.status == {} ) | .metadata.name' | xargs oc adm certificate approve
