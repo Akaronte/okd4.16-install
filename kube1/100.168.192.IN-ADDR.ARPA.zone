@@ -1,0 +1,26 @@
+$TTL    604800
+@       IN      SOA     okd-services.kube1.okd.piensoluegoinstalo.com. admin.kube1.okd.piensoluegoinstalo.com. (
+                  6     ; Serial
+             604800     ; Refresh
+              86400     ; Retry
+            2419200     ; Expire
+             604800     ; Negative Cache TTL
+)
+
+; name servers - NS records
+    IN      NS      okd4-services.kube1.okd.piensoluegoinstalo.com.
+
+; name servers - PTR records
+2    IN    PTR    okd4-services.kube1.okd.piensoluegoinstalo.com.
+
+; OpenShift Container Platform Cluster - PTR records
+3    IN    PTR    bootstrap.kube1.okd.piensoluegoinstalo.com.
+4    IN    PTR    master1.kube1.okd.piensoluegoinstalo.com.
+5    IN    PTR    master2.kube1.okd.piensoluegoinstalo.com.
+6    IN    PTR    master3.kube1.okd.piensoluegoinstalo.com.
+7    IN    PTR    worker1.kube1.okd.piensoluegoinstalo.com.
+8    IN    PTR    worker2.kube1.okd.piensoluegoinstalo.com.
+9    IN    PTR    worker3.kube1.okd.piensoluegoinstalo.com.
+10    IN    PTR    worker4.kube1.okd.piensoluegoinstalo.com.
+2    IN    PTR    api.kube1.okd.piensoluegoinstalo.com.
+2    IN    PTR    api-int.kube1.okd.piensoluegoinstalo.com.

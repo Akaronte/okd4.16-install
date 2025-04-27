@@ -1,0 +1,39 @@
+$TTL    604800
+@       IN      SOA     okd4-services.kube1.okd.piensoluegoinstalo.com. admin.kube1.okd.piensoluegoinstalo.com. (
+                  1     ; Serial
+             604800     ; Refresh
+              86400     ; Retry
+            2419200     ; Expire
+             604800     ; Negative Cache TTL
+)
+
+; name servers - NS records
+    IN      NS      okd4-services
+
+; name servers - A records
+okd4-services.kube1.okd.piensoluegoinstalo.com.          IN      A       192.168.100.2
+
+; OpenShift Container Platform Cluster - A records
+bootstrap.kube1.okd.piensoluegoinstalo.com.       IN      A      192.168.100.3
+master1.kube1.okd.piensoluegoinstalo.com. IN      A      192.168.100.4
+master2.kube1.okd.piensoluegoinstalo.com. IN      A      192.168.100.5
+master3.kube1.okd.piensoluegoinstalo.com. IN      A      192.168.100.6
+worker1.kube1.okd.piensoluegoinstalo.com.       IN      A      192.168.100.7
+worker2.kube1.okd.piensoluegoinstalo.com.       IN      A      192.168.100.8
+worker3.kube1.okd.piensoluegoinstalo.com.       IN      A      192.168.100.9
+worker4.kube1.okd.piensoluegoinstalo.com.       IN      A      192.168.100.10
+
+; OpenShift internal cluster IPs - A records
+api.kube1.okd.piensoluegoinstalo.com.       IN    A    192.168.100.2
+api-int.kube1.okd.piensoluegoinstalo.com.   IN    A    192.168.100.2
+*.apps.kube1.okd.piensoluegoinstalo.com.    IN    A    192.168.100.2
+etcd-0.kube1.okd.piensoluegoinstalo.com.    IN    A    192.168.100.4
+etcd-1.kube1.okd.piensoluegoinstalo.com.    IN    A    192.168.100.5
+etcd-2.kube1.okd.piensoluegoinstalo.com.    IN    A    192.168.100.6
+console-openshift-console.apps.kube1.okd.piensoluegoinstalo.com.    IN     A     192.168.100.2
+oauth-openshift.apps.kube1.okd.piensoluegoinstalo.com.              IN     A     192.168.100.2
+; OpenShift internal cluster IPs - SRV records
+_etcd-server-ssl._tcp.kube1.okd.piensoluegoinstalo.com.    86400     IN    SRV     0    10    2380    etcd-0.kube1
+_etcd-server-ssl._tcp.kube1.okd.piensoluegoinstalo.com.    86400     IN    SRV     0    10    2380    etcd-1.kube1
+_etcd-server-ssl._tcp.kube1.okd.piensoluegoinstalo.com.    86400     IN    SRV     0    10    2380    etcd-2.kube1
+
