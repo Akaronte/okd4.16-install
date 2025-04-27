@@ -46,11 +46,129 @@ named-checkzone master1.kube1.okd.piensoluegoinstalo.com.zone /var/cache/bind/ku
 dig @127.0.0.1 bootstrap.kube1.okd.piensoluegoinstalo.com
 
 
-cat install_dir/auth/kubeadmin-password
 
-oc adm policy add-cluster-role-to-user cluster-admin admin
+export KUBECONFIG=~/install_dir/auth/kubeconfig
 
 oc get csr -ojson | jq -r '.items[] | select(.status == {} ) | .metadata.name' | xargs oc adm certificate approve
 
 
 
+cat install_dir/auth/kubeadmin-password
+
+oc adm policy add-cluster-role-to-user cluster-admin admin
+
+
+
+----
+
+
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.9/config/manifests/metallb-native.yaml
+
+
+oc adm policy add-scc-to-group anyuid system:authenticated  -n metallb-system
+
+
+oc adm policy add-scc-to-user privileged  -z speaker -n metallb-system
+
+
+oc adm policy add-scc-to-user anyuid controller -n metallb-system
+
+
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: metallb
+  namespace: metallb-system
+
+
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: defaults-ips
+  namespace: metallb-system
+spec:
+  addresses:
+  - 192.168.200.100-192.168.200.150
+  autoAssign: true
+
+
+cat << EOF | oc apply -f -
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: metallb
+  namespace: metallb-system
+EOF
+
+
+cat << EOF | oc apply -f -
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: defaults-ips
+  namespace: metallb-system
+spec:
+  addresses:
+  - 192.168.200.100-192.168.200.150
+  autoAssign: true
+EOF
+
+--------
+1. Instalar el servidor NFS
+En Ubuntu, el paquete equivalente a nfs-utils es nfs-kernel-server. Ejecuta:​
+
+sudo apt update
+sudo apt install nfs-kernel-server
+Este paquete incluye rpcbind, necesario para el funcionamiento de NFS.​
+
+2. Habilitar y arrancar los servicios necesarios
+Activa y arranca los servicios de NFS y rpcbind:​
+
+bash
+Copiar
+Editar
+sudo systemctl enable --now nfs-kernel-server
+sudo systemctl enable --now rpcbind
+Esto garantiza que los servicios se inicien automáticamente al arrancar el sistema.​
+
+3. Crear y configurar el directorio compartido
+Crea el directorio que deseas compartir y establece los permisos adecuados:​
+vigneshsubbaiah.medium.com
+
+
+bash
+Copiar
+Editar
+sudo mkdir -p /var/nfsshare
+sudo chmod -R 755 /var/nfsshare
+Esto permite que otros usuarios puedan leer y ejecutar archivos en ese directorio.​
+
+4. Configurar las exportaciones NFS
+Edita el archivo /etc/exports para definir qué directorios se compartirán y con qué permisos:​
+pc-freak.net
++2
+unixmen.com
++2
+vigneshsubbaiah.medium.com
++2
+
+bash
+Copiar
+Editar
+sudo nano /etc/exports
+
+
+bash
+Copiar
+Editar
+/var/nfsshare 192.168.200.0/24(rw,sync,no_subtree_check)
+
+
+
+helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
+
+helm repo update
+
+helm install nfs-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner --set nfs.server=192.168.200.199 --set nfs.path=/var/nfssahre --set storageClass.name=nfs-provisioner
+
+oc patch storageclass nfs-provisioner -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
