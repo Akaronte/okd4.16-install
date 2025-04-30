@@ -1,0 +1,47 @@
+---
+- name: Instalar Terraform desde el repositorio de HashiCorp
+  hosts: all
+  become: yes
+  tasks:
+
+    - name: Actualizar la lista de paquetes
+      apt:
+        update_cache: yes
+
+    - name: Instalar dependencias necesarias
+      apt:
+        name:
+          - gnupg
+          - software-properties-common
+        state: present
+
+    - name: Descargar y guardar la clave GPG de HashiCorp
+      ansible.builtin.shell: |
+        wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor > /usr/share/keyrings/hashicorp-archive-keyring.gpg
+      args:
+        creates: /usr/share/keyrings/hashicorp-archive-keyring.gpg
+
+    - name: Verificar la huella digital de la clave (debug only)
+      ansible.builtin.shell: |
+        gpg --no-default-keyring --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg --fingerprint
+      register: hashicorp_fingerprint
+      changed_when: false
+
+    - name: Mostrar huella digital en consola
+      debug:
+        var: hashicorp_fingerprint.stdout_lines
+
+    - name: Agregar el repositorio de HashiCorp
+      apt_repository:
+        repo: "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
+        filename: hashicorp
+        state: present
+
+    - name: Actualizar cache de apt después de agregar el repo
+      apt:
+        update_cache: yes
+
+    - name: Instalar Terraform
+      apt:
+        name: terraform
+        state: present

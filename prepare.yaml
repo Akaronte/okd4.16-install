@@ -1,0 +1,136 @@
+---
+- name: Descargar y preparar herramientas de OKD y Fedora CoreOS
+  hosts: localhost
+  become: yes
+  tasks:
+
+    - name: Crear directorio temporal de trabajo
+      file:
+        path: /tmp/okd_setup
+        state: directory
+
+    - name: Descargar Fedora CoreOS 38 ISO
+      get_url:
+        url: https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/38.20230609.3.0/x86_64/fedora-coreos-38.20230609.3.0-live.x86_64.iso
+        dest: /tmp/okd_setup/fedora-coreos-38.iso
+
+    - name: Descargar OpenShift Install
+      get_url:
+        url: https://github.com/okd-project/okd/releases/download/4.16.0-okd-scos.1/openshift-install-linux-4.16.0-okd-scos.1.tar.gz
+        dest: /tmp/okd_setup/openshift-install.tar.gz
+
+    - name: Descargar OpenShift Client
+      get_url:
+        url: https://github.com/okd-project/okd/releases/download/4.16.0-okd-scos.1/openshift-client-linux-amd64-rhel8-4.16.0-okd-scos.1.tar.gz
+        dest: /tmp/okd_setup/openshift-client.tar.gz
+
+    - name: Extraer OpenShift Install
+      unarchive:
+        src: /tmp/okd_setup/openshift-install.tar.gz
+        dest: /tmp/okd_setup/
+        remote_src: yes
+
+    - name: Extraer OpenShift Client
+      unarchive:
+        src: /tmp/okd_setup/openshift-client.tar.gz
+        dest: /tmp/okd_setup/
+        remote_src: yes
+
+    - name: Mover binarios a /usr/local/bin
+      copy:
+        src: "/tmp/okd_setup/{{ item }}"
+        dest: "/usr/local/bin/{{ item }}"
+        mode: '0755'
+      loop:
+        - oc
+        - kubectl
+        - openshift-install
+
+    - name: Instalar paquetes necesarios
+      apt:
+        name:
+          - curl
+          - gpg
+          - gcc
+          - make
+          - pkg-config
+          - libssl-dev
+          - libzstd-dev
+        state: present
+        update_cache: yes
+
+    - name: Instalar Rust
+      shell: |
+        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+      args:
+        executable: /bin/bash
+        creates: "{{ ansible_env.HOME }}/.cargo/bin/rustc"
+
+    - name: Cargar entorno de Rust
+      shell: source {{ ansible_env.HOME }}/.cargo/env
+      args:
+        executable: /bin/bash
+
+    - name: Clonar repositorio coreos-installer
+      git:
+        repo: https://github.com/coreos/coreos-installer.git
+        dest: "{{ ansible_env.HOME }}/coreos-installer"
+        update: no
+
+    - name: Compilar coreos-installer
+      shell: |
+        source {{ ansible_env.HOME }}/.cargo/env
+        cargo build --release
+      args:
+        chdir: "{{ ansible_env.HOME }}/coreos-installer"
+        executable: /bin/bash
+
+    - name: Copiar coreos-installer a /usr/local/bin
+      copy:
+        src: "{{ ansible_env.HOME }}/coreos-installer/target/release/coreos-installer"
+        dest: /usr/local/bin/coreos-installer
+        mode: '0755'
+
+
+    - name: Actualizar la lista de paquetes
+      apt:
+        update_cache: yes
+
+    - name: Instalar dependencias necesarias
+      apt:
+        name:
+          - gnupg
+          - software-properties-common
+        state: present
+
+    - name: Descargar y guardar la clave GPG de HashiCorp
+      ansible.builtin.shell: |
+        wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor > /usr/share/keyrings/hashicorp-archive-keyring.gpg
+      args:
+        creates: /usr/share/keyrings/hashicorp-archive-keyring.gpg
+
+    - name: Verificar la huella digital de la clave (debug only)
+      ansible.builtin.shell: |
+        gpg --no-default-keyring --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg --fingerprint
+      register: hashicorp_fingerprint
+      changed_when: false
+
+    - name: Mostrar huella digital en consola
+      debug:
+        var: hashicorp_fingerprint.stdout_lines
+
+    - name: Agregar el repositorio de HashiCorp
+      apt_repository:
+        repo: "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main"
+        filename: hashicorp
+        state: present
+
+    - name: Actualizar cache de apt después de agregar el repo
+      apt:
+        update_cache: yes
+
+    - name: Instalar Terraform
+      apt:
+        name: terraform
+        state: present
+
