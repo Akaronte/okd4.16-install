@@ -1,0 +1,61 @@
+---
+- name: Deploy MetalLB with required SCC permissions and config
+  hosts: localhost
+  gather_facts: no
+  collections:
+    - kubernetes.core
+
+  vars:
+    metallb_namespace: metallb-system
+    metallb_manifest_url: "https://raw.githubusercontent.com/metallb/metallb/v0.14.9/config/manifests/metallb-native.yaml"
+    ip_address_pool:
+      apiVersion: metallb.io/v1beta1
+      kind: IPAddressPool
+      metadata:
+        name: defaults-ips
+        namespace: "{{ metallb_namespace }}"
+      spec:
+        addresses:
+          - 192.168.200.100-192.168.200.150
+        autoAssign: true
+    l2_advertisement:
+      apiVersion: metallb.io/v1beta1
+      kind: L2Advertisement
+      metadata:
+        name: metallb
+        namespace: "{{ metallb_namespace }}"
+
+  tasks:
+    - name: Apply MetalLB core manifest
+      ansible.builtin.shell: >
+        kubectl apply -f {{ metallb_manifest_url }}
+      register: apply_result
+      changed_when: "'configured' in apply_result.stdout or 'created' in apply_result.stdout"
+
+    - name: Add 'anyuid' SCC to 'system:authenticated' group
+      ansible.builtin.shell: >
+        oc adm policy add-scc-to-group anyuid system:authenticated -n {{ metallb_namespace }}
+      register: scc_group_result
+      changed_when: "'added' in scc_group_result.stdout"
+
+    - name: Add 'privileged' SCC to 'speaker' service account
+      ansible.builtin.shell: >
+        oc adm policy add-scc-to-user privileged -z speaker -n {{ metallb_namespace }}
+      register: scc_speaker_result
+      changed_when: "'added' in scc_speaker_result.stdout"
+
+    - name: Add 'anyuid' SCC to 'controller' user
+      ansible.builtin.shell: >
+        oc adm policy add-scc-to-user anyuid controller -n {{ metallb_namespace }}
+      register: scc_controller_result
+      changed_when: "'added' in scc_controller_result.stdout"
+
+    - name: Create MetalLB L2Advertisement
+      kubernetes.core.k8s:
+        state: present
+        definition: "{{ l2_advertisement }}"
+
+    - name: Create MetalLB IPAddressPool
+      kubernetes.core.k8s:
+        state: present
+        definition: "{{ ip_address_pool }}"
