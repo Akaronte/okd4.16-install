@@ -1,0 +1,44 @@
+---
+- name: Instalar y configurar NFS
+  hosts: nfs
+  become: yes
+  tasks:
+
+    - name: Actualizar caché de paquetes
+      apt:
+        update_cache: yes
+
+    - name: Instalar nfs-kernel-server (incluye rpcbind)
+      apt:
+        name: nfs-kernel-server
+        state: present
+
+    - name: Habilitar y arrancar nfs-kernel-server
+      systemd:
+        name: nfs-kernel-server
+        enabled: yes
+        state: started
+
+    - name: Habilitar y arrancar rpcbind
+      systemd:
+        name: rpcbind
+        enabled: yes
+        state: started
+
+    - name: Crear el directorio compartido
+      file:
+        path: /var/nfsshare
+        state: directory
+        mode: '0755'
+
+    - name: Configurar exportaciones NFS
+      copy:
+        dest: /etc/exports
+        content: |
+          /var/nfsshare 192.168.100.0/24(rw,sync,no_subtree_check)
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Recargar exportaciones NFS
+      command: exportfs -ra

@@ -1,5 +1,5 @@
 ---
-- name: Descargar y preparar herramientas de OKD y Fedora CoreOS
+- name: Instalar y configurar NFS
   hosts: nfs
   become: yes
   tasks:
