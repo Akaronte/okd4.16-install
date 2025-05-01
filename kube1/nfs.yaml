@@ -42,3 +42,31 @@
 
     - name: Recargar exportaciones NFS
       command: exportfs -ra
+
+    - name: Add Helm repo for nfs-subdir-external-provisioner
+      ansible.builtin.shell: |
+        helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
+      args:
+        warn: false
+
+    - name: Update Helm repositories
+      ansible.builtin.shell: helm repo update
+      args:
+        warn: false
+
+    - name: Install nfs-subdir-external-provisioner via Helm
+      ansible.builtin.shell: >
+        helm install nfs-provisioner
+        nfs-subdir-external-provisioner/nfs-subdir-external-provisioner
+        --set nfs.server=192.168.100.199
+        --set nfs.path=/var/nfssahre
+        --set storageClass.name=nfs-provisioner
+      args:
+        warn: false
+
+    - name: Patch the storage class to make it default
+      ansible.builtin.shell: >
+        oc patch storageclass nfs-provisioner
+        -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+      args:
+        warn: false
