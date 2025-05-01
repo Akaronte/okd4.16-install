@@ -169,7 +169,7 @@ helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/
 
 helm repo update
 
-helm install nfs-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner --set nfs.server=192.168.200.199 --set nfs.path=/var/nfssahre --set storageClass.name=nfs-provisioner
+helm install nfs-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner --set nfs.server=192.168.200.199 --set nfs.path=/var/nfsshare --set storageClass.name=nfs-provisioner
 
 oc patch storageclass nfs-provisioner -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 
