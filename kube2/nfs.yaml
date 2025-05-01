@@ -59,7 +59,7 @@
         helm install nfs-provisioner
         nfs-subdir-external-provisioner/nfs-subdir-external-provisioner
         --set nfs.server=192.168.200.199
-        --set nfs.path=/var/nfssahre
+        --set nfs.path=/var/nfsshare
         --set storageClass.name=nfs-provisioner
       args:
         warn: false
