@@ -102,7 +102,12 @@ resource "proxmox_vm_qemu" "master1" {
   bios = "ovmf"
   boot = "order=virtio0;ide2;net0;"
   
-  scsihw = "virtio-scsi-pci" 
+    scsihw = "virtio-scsi-pci" 
+    timeouts {
+    create = "30m"
+    update = "30m"
+    delete = "30m"
+  }
   
 
 }
@@ -147,7 +152,12 @@ resource "proxmox_vm_qemu" "master2" {
   bios = "ovmf"
   boot = "order=virtio0;ide2;net0;"
   
-  scsihw = "virtio-scsi-pci" 
+    scsihw = "virtio-scsi-pci" 
+    timeouts {
+    create = "30m"
+    update = "30m"
+    delete = "30m"
+  }
 
 }
 
@@ -191,7 +201,12 @@ resource "proxmox_vm_qemu" "master3" {
   bios = "ovmf"
   boot = "order=virtio0;ide2;net0;"
   
-  scsihw = "virtio-scsi-pci" 
+    scsihw = "virtio-scsi-pci" 
+    timeouts {
+    create = "30m"
+    update = "30m"
+    delete = "30m"
+  }
 
 }
 
@@ -236,7 +251,12 @@ resource "proxmox_vm_qemu" "worker1" {
   bios = "ovmf"
   boot = "order=virtio0;ide2;net0;"
   
-  scsihw = "virtio-scsi-pci" 
+    scsihw = "virtio-scsi-pci" 
+    timeouts {
+    create = "30m"
+    update = "30m"
+    delete = "30m"
+  }
 
 }
 
@@ -281,7 +301,12 @@ resource "proxmox_vm_qemu" "worker2" {
   bios = "ovmf"
   boot = "order=virtio0;ide2;net0;"
   
-  scsihw = "virtio-scsi-pci" 
+    scsihw = "virtio-scsi-pci" 
+    timeouts {
+    create = "30m"
+    update = "30m"
+    delete = "30m"
+  }
 
 }
 
@@ -326,7 +351,12 @@ resource "proxmox_vm_qemu" "worker3" {
   bios = "ovmf"
   boot = "order=virtio0;ide2;net0;"
   
-  scsihw = "virtio-scsi-pci" 
+    scsihw = "virtio-scsi-pci" 
+    timeouts {
+    create = "30m"
+    update = "30m"
+    delete = "30m"
+  }
 
 }
 
@@ -371,7 +401,12 @@ resource "proxmox_vm_qemu" "worker4" {
   bios = "ovmf"
   boot = "order=virtio0;ide2;net0;"
   
-  scsihw = "virtio-scsi-pci" 
+    scsihw = "virtio-scsi-pci" 
+    timeouts {
+    create = "30m"
+    update = "30m"
+    delete = "30m"
+  }
 
 }
 

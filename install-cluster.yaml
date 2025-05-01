@@ -1,0 +1,20 @@
+---
+- name: Wait until Kubernetes API returns HTTP 200
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Wait for HTTP 200 from Kubernetes API
+      ansible.builtin.uri:
+        url: https://api.kube1.okd.piensoluegoinstalo.com:6443
+        method: GET
+        return_content: no
+        validate_certs: no  # Cambiar a 'yes' si el certificado es válido
+      register: result
+      until: result.status == 200
+      retries: 10            # Número máximo de intentos
+      delay: 5               # Segundos entre intentos
+      ignore_errors: false   # True si no quieres que falle al final
+
+    - name: Show successful status
+      ansible.builtin.debug:
+        msg: "Kubernetes API is ready with status code {{ result.status }}"
