@@ -1,5 +1,5 @@
 ---
 - name: Descargar y preparar herramientas de OKD y Fedora CoreOS
-  hosts: localhost
+  hosts: nfs
   become: yes
   tasks:

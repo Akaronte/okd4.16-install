@@ -1,6 +1,6 @@
 ---
 - name: Install Helm on Ubuntu
-  hosts: all
+  hosts: localhost
   become: true
 
   tasks:
