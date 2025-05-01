@@ -5,7 +5,7 @@
   tasks:
     - name: Wait for HTTP 200 from Kubernetes API
       ansible.builtin.uri:
-        url: https://api.kube1.okd.piensoluegoinstalo.com:6443
+        url: https://api.kube1.okd.piensoluegoinstalo.com:6443/version
         method: GET
         return_content: no
         validate_certs: no  # Cambiar a 'yes' si el certificado es válido
