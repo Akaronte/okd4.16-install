@@ -1,0 +1,29 @@
+---
+- name: Install Helm on Ubuntu
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Ensure curl is installed
+      apt:
+        name: curl
+        state: present
+        update_cache: true
+
+    - name: Download Helm install script
+      get_url:
+        url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+        dest: /tmp/get_helm.sh
+        mode: '0755'
+
+    - name: Run Helm install script
+      command: /tmp/get_helm.sh creates=/usr/local/bin/helm
+
+    - name: Verify Helm installation
+      command: helm version
+      register: helm_version
+      changed_when: false
+
+    - name: Show Helm version
+      debug:
+        var: helm_version.stdout
