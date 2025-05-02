@@ -111,7 +111,12 @@ spec:
   addresses:
   - 192.168.200.100-192.168.200.150
   autoAssign: true
+  interfaces:
+  - ens18
 EOF
+
+
+arping -I ens19 192.168.200.100
 
 --------
 1. Instalar el servidor NFS
@@ -169,7 +174,7 @@ helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/
 
 helm repo update
 
-helm install nfs-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner --set nfs.server=192.168.200.199 --set nfs.path=/var/nfsshare --set storageClass.name=nfs-provisioner
+helm install nfs-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner --set nfs.server=192.168.100.199 --set nfs.path=/var/nfsshare --set storageClass.name=nfs-provisioner
 
 oc patch storageclass nfs-provisioner -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 
