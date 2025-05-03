@@ -6,8 +6,6 @@ apt install ansible -y
 
 wget https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/38.20230609.3.0/x86_64/fedora-coreos-38.20230609.3.0-live.x86_64.iso
 
-wget https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/41.20250331.3.0/x86_64/fedora-coreos-41.20250331.3.0-live.x86_64.iso
-
 wget https://github.com/okd-project/okd/releases/download/4.16.0-okd-scos.1/openshift-install-linux-4.16.0-okd-scos.1.tar.gz
 
 wget https://github.com/okd-project/okd/releases/download/4.16.0-okd-scos.1/openshift-client-linux-amd64-rhel8-4.16.0-okd-scos.1.tar.gz
@@ -116,6 +114,8 @@ spec:
 EOF
 
 
+oc adm policy add-scc-to-user privileged -n metallb-system -z speaker
+
 arping -I ens19 192.168.200.100
 
 --------
@@ -198,3 +198,6 @@ sudo tee /etc/apt/sources.list.d/hashicorp.list
 sudo apt update
 
 sudo apt-get install terraform
+
+
+sudo apt install nginx-full

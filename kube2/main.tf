@@ -59,6 +59,11 @@ resource "proxmox_vm_qemu" "bootstrap" {
   boot = "order=virtio0;ide2;net0;"
   
   scsihw = "virtio-scsi-pci"
+  timeouts {
+    create = "30m"
+    update = "30m"
+    delete = "30m"
+  }
 }
 
 
