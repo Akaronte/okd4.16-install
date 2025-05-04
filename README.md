@@ -200,4 +200,54 @@ sudo apt update
 sudo apt-get install terraform
 
 
-sudo apt install nginx-full
+---
+
+
+
+   oc adm policy add-scc-to-user anyuid -z nginx-ingress-serviceaccount -n nginx-ingress
+
+   oc adm policy add-scc-to-user anyuid -z nginx-ingress -n nginx-ingress
+
+
+
+
+oc adm policy add-scc-to-user anyuid -z default -n ingress-nginx
+oc adm policy add-scc-to-user anyuid -z nginx-ingress -n ingress-nginx
+
+
+helm install nginxingress ingress-nginx/ingress-nginx -f nginx-values.yaml
+
+
+
+----
+git clone https://github.com/nginx/kubernetes-ingress.git --branch v5.0.0
+cd kubernetes-ingress
+
+
+oc new-project  nginx-ingress
+kubectl apply -f deployments/common/ns-and-sa.yaml
+kubectl apply -f deployments/rbac/rbac.yaml
+kubectl apply -f examples/shared-examples/default-server-secret/default-server-secret.yaml
+kubectl apply -f deployments/common/nginx-config.yaml
+kubectl apply -f deployments/common/ingress-class.yaml
+kubectl apply -f https://raw.githubusercontent.com/nginx/kubernetes-ingress/v5.0.0/deploy/crds.yaml
+kubectl apply -f deployments/deployment/nginx-ingress.yaml
+kubectl get pods --namespace=nginx-ingress
+kubectl apply -f deployments/service/loadbalancer.yaml
+
+
+securityContext:
+  capabilities:
+    add:
+      - NET_BIND_SERVICE
+    drop:
+      - ALL
+  runAsUser: 1000770001
+  runAsNonRoot: true
+  allowPrivilegeEscalation: false
+
+
+
+curl --resolve maven-app.ingress.kube2.okd.piensoluegoinstalo.com:80:192.168.200.100 http://maven-app.ingress.kube2.okd.piensoluegoinstalo.com/hello
+----
+
