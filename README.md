@@ -235,7 +235,7 @@ kubectl apply -f deployments/deployment/nginx-ingress.yaml
 kubectl get pods --namespace=nginx-ingress
 kubectl apply -f deployments/service/loadbalancer.yaml
 
-
+#fix deployment runAsUser in yaml
 securityContext:
   capabilities:
     add:
