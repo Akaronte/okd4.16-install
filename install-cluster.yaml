@@ -8,12 +8,12 @@
         url: https://api.kube1.okd.piensoluegoinstalo.com:6443/version
         method: GET
         return_content: no
-        validate_certs: no  # Cambiar a 'yes' si el certificado es válido
+        validate_certs: no
       register: result
       until: result.status == 200
-      retries: 10            # Número máximo de intentos
-      delay: 5               # Segundos entre intentos
-      ignore_errors: false   # True si no quieres que falle al final
+      retries: 1000
+      delay: 5
+      ignore_errors: false
 
     - name: Show successful status
       ansible.builtin.debug:
@@ -27,7 +27,7 @@
         validate_certs: no 
       register: result
       until: result.status == 200
-      retries: 10
+      retries: 1000
       delay: 5               
       ignore_errors: false  
 
