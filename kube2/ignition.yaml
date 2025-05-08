@@ -45,17 +45,17 @@
 
     - name: Remove bootstrap ISO if it exists
       ansible.builtin.file:
-        path: /root/bootstrap.iso
+        path: /root/okd4.16-install/kube1/bootstrap.iso
         state: absent
 
     - name: Remove master ISO if it exists
       ansible.builtin.file:
-        path: /root/master.iso
+        path: /root/okd4.16-install/kube1/master.iso
         state: absent
 
     - name: Remove worker ISO if it exists
       ansible.builtin.file:
-        path: /root/worker.iso
+        path: /root/okd4.16-install/kube1/worker.iso
         state: absent
 
     - name: Customize CoreOS ISO for bootstrap
