@@ -7,7 +7,7 @@
     - name: Descargar Fedora CoreOS 38 ISO
       get_url:
         url: https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/38.20230609.3.0/x86_64/fedora-coreos-38.20230609.3.0-live.x86_64.iso
-        dest: /root/fedora-coreos-38.iso
+        dest: /root/okd4.16-install/kube1/fedora-coreos-38.20230609.3.0-live.x86_64.iso
 
     - name: Remove the install directory if it exists
       ansible.builtin.file:
