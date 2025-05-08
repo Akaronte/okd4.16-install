@@ -49,7 +49,7 @@ resource "proxmox_vm_qemu" "bootstrap" {
       virtio0 {
         disk {
           size    = "64G"
-          storage = "SSDB"
+          storage = "TERA3"
         }
       }
     }
