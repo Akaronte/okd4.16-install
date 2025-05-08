@@ -74,16 +74,16 @@
       ansible.builtin.command:
         cmd: scp -o StrictHostKeyChecking=no bootstrap.iso root@192.168.1.5:/var/lib/vz/template/iso/bootstrap.iso
       args:
-        chdir: /root
+        chdir: /root/okd4.16-install/kube2/
 
     - name: Copy master ISO to remote server
       ansible.builtin.command:
         cmd: scp -o StrictHostKeyChecking=no master.iso root@192.168.1.5:/var/lib/vz/template/iso/master.iso
       args:
-        chdir: /root
+        chdir: /root/okd4.16-install/kube2/
 
     - name: Copy worker ISO to remote server
       ansible.builtin.command:
         cmd: scp -o StrictHostKeyChecking=no worker.iso root@192.168.1.5:/var/lib/vz/template/iso/worker.iso
       args:
-        chdir: /root
+        chdir: /root/okd4.16-install/kube2/
