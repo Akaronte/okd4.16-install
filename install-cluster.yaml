@@ -18,3 +18,19 @@
     - name: Show successful status
       ansible.builtin.debug:
         msg: "Kubernetes API is ready with status code {{ result.status }}"
+
+    - name: Wait for HTTP 200 from config ignition master
+      ansible.builtin.uri:
+        url: https://api-int.kubel.okd.piensoluegoinstalo.com:22623/config/master
+        method: GET
+        return_content: no
+        validate_certs: no 
+      register: result
+      until: result.status == 200
+      retries: 10
+      delay: 5               
+      ignore_errors: false  
+
+    - name: Show successful status
+      ansible.builtin.debug:
+        msg: "config master is ready with status code {{ result.status }}"
