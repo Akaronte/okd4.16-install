@@ -62,7 +62,7 @@
       ansible.builtin.command:
         cmd: coreos-installer iso customize --live-karg-append 'rd.udev=1' --live-karg-append 'ignition.platform.id=qemu' --live-karg-append 'fsck.mode=skip' --dest-device /dev/vda --dest-ignition /root/install_dir/bootstrap.ign -o bootstrap.iso /root/okd4.16-install/kube1/fedora-coreos-38.20230609.3.0-live.x86_64.iso
       args:
-        chdir: /okd4.16-install/kube1/
+        chdir: /root/okd4.16-install/kube1
 
     - name: Customize CoreOS ISO for master
       ansible.builtin.command:
