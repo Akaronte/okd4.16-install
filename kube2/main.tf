@@ -14,6 +14,7 @@ provider "proxmox" {
   pm_user = "root@pam"
   pm_password = "mondariz10"
   pm_tls_insecure = true
+  pm_debug = true
 }
 
 # #terraform apply destroy -target=proxmox_vm_qemu.bootstrap
