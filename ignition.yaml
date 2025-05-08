@@ -56,19 +56,19 @@
       ansible.builtin.command:
         cmd: coreos-installer iso customize --live-karg-append 'rd.udev=1' --live-karg-append 'ignition.platform.id=qemu' --live-karg-append 'fsck.mode=skip' --dest-device /dev/vda --dest-ignition /root/install_dir/bootstrap.ign -o bootstrap.iso fedora-coreos-38.20230609.3.0-live.x86_64.iso
       args:
-        chdir: /root
+        chdir: /root/okd4.16-install/kube2
 
     - name: Customize CoreOS ISO for master
       ansible.builtin.command:
         cmd: coreos-installer iso customize --live-karg-append 'rd.udev=1' --live-karg-append 'ignition.platform.id=qemu' --live-karg-append 'fsck.mode=skip' --dest-device /dev/vda --dest-ignition /root/install_dir/master.ign -o master.iso fedora-coreos-38.20230609.3.0-live.x86_64.iso
       args:
-        chdir: /root
+        chdir: /root/okd4.16-install/kube2
 
     - name: Customize CoreOS ISO for worker
       ansible.builtin.command:
         cmd: coreos-installer iso customize --live-karg-append 'rd.udev=1' --live-karg-append 'ignition.platform.id=qemu' --live-karg-append 'fsck.mode=skip' --dest-device /dev/vda --dest-ignition /root/install_dir/worker.ign -o worker.iso fedora-coreos-38.20230609.3.0-live.x86_64.iso
       args:
-        chdir: /root
+        chdir: /root/okd4.16-install/kube2
 
     - name: Copy bootstrap ISO to remote server
       ansible.builtin.command:
