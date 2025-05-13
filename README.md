@@ -252,4 +252,5 @@ curl --resolve ingress-maven-app.ingress.kube2.okd.piensoluegoinstalo.com:80:192
 ----
 
 
-
+netstat -tuln | grep 22623
+sudo hostnamectl set-hostname okd4-services.kube1.okd.piensoluegoinstalo.com
