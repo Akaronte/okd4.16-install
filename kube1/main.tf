@@ -73,6 +73,7 @@ resource "proxmox_vm_qemu" "master1" {
   target_node = "makinon"
   name        = "master1"
   pxe         = true
+  onboot      = true
   agent       = 0
   vmid        = 104
 
@@ -123,6 +124,7 @@ resource "proxmox_vm_qemu" "master2" {
   target_node = "makinon"
   name        = "master2"
   pxe         = true
+  onboot      = true
   agent       = 0
   vmid        = 105
 
@@ -172,6 +174,7 @@ resource "proxmox_vm_qemu" "master3" {
   target_node = "makinon"
   name        = "master3"
   pxe         = true
+  onboot      = true
   agent       = 0
   vmid        = 106 
 
@@ -222,6 +225,7 @@ resource "proxmox_vm_qemu" "worker1" {
   target_node = "makinon"
   name        = "worker1"
   pxe         = true
+  onboot      = true
   agent       = 0
   vmid        = 107
 
@@ -272,6 +276,7 @@ resource "proxmox_vm_qemu" "worker2" {
   target_node = "makinon"
   name        = "worker2"
   pxe         = true
+  onboot      = true
   agent       = 0
   vmid        = 108
 
@@ -322,6 +327,7 @@ resource "proxmox_vm_qemu" "worker3" {
   target_node = "makinon"
   name        = "worker3"
   pxe         = true
+  onboot      = true
   agent       = 0
   vmid        = 109
 
@@ -372,6 +378,7 @@ resource "proxmox_vm_qemu" "worker4" {
   target_node = "makinon"
   name        = "worker4"
   pxe         = true
+  onboot      = true
   agent       = 0
   vmid        = 110
 
