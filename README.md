@@ -173,6 +173,15 @@ sudo apt update
 sudo apt-get install terraform
 
 
+cd kube1
+
+ansible-playbook ignition.yaml
+
+terraform apply -auto-approve
+
+
+terraform destroy -auto-aproved
+
 ---
 
 
