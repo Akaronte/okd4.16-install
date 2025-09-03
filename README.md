@@ -1,3 +1,4 @@
+apt update
 apt install bind9 bind9utils bind9-doc haproxy git -y
 apt install software-properties-common -y
 add-apt-repository --yes --update ppa:ansible/ansible
@@ -86,7 +87,7 @@ metadata:
   namespace: metallb-system
 spec:
   addresses:
-  - 192.168.200.100-192.168.200.150
+  - 192.168.100.100-192.168.100.150
   autoAssign: true
 
 
@@ -107,10 +108,8 @@ metadata:
   namespace: metallb-system
 spec:
   addresses:
-  - 192.168.200.100-192.168.200.150
+  - 192.168.100.100-192.168.100.150
   autoAssign: true
-  interfaces:
-  - ens18
 EOF
 
 
@@ -119,54 +118,28 @@ oc adm policy add-scc-to-user privileged -n metallb-system -z speaker
 arping -I ens19 192.168.200.100
 
 --------
-1. Instalar el servidor NFS
-En Ubuntu, el paquete equivalente a nfs-utils es nfs-kernel-server. Ejecuta:​
 
 sudo apt update
-sudo apt install nfs-kernel-server
+sudo apt install nfs-kernel-server -y
+
 Este paquete incluye rpcbind, necesario para el funcionamiento de NFS.​
 
-2. Habilitar y arrancar los servicios necesarios
-Activa y arranca los servicios de NFS y rpcbind:​
 
-bash
-Copiar
-Editar
 sudo systemctl enable --now nfs-kernel-server
 sudo systemctl enable --now rpcbind
+
 Esto garantiza que los servicios se inicien automáticamente al arrancar el sistema.​
 
-3. Crear y configurar el directorio compartido
-Crea el directorio que deseas compartir y establece los permisos adecuados:​
-vigneshsubbaiah.medium.com
 
-
-bash
-Copiar
-Editar
 sudo mkdir -p /var/nfsshare
 sudo chmod -R 755 /var/nfsshare
 Esto permite que otros usuarios puedan leer y ejecutar archivos en ese directorio.​
 
-4. Configurar las exportaciones NFS
-Edita el archivo /etc/exports para definir qué directorios se compartirán y con qué permisos:​
-pc-freak.net
-+2
-unixmen.com
-+2
-vigneshsubbaiah.medium.com
-+2
 
-bash
-Copiar
-Editar
 sudo nano /etc/exports
-
-
-bash
-Copiar
-Editar
 /var/nfsshare 192.168.200.0/24(rw,sync,no_subtree_check)
+sudo exportfs -a
+
 
 
 
